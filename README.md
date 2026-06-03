@@ -4,14 +4,14 @@
 
 ## What does it do?
 
-Point Claude at your notes and ask for Anki cards. Deckhand produces atomic, **cloze-deletion** cards, every one carrying a **Context** anchor (the bigger picture you re-read when a fact goes fuzzy), a **source**, and **tags**. It hands you a ready-to-import `.tsv` file. That's it.
+Point Claude at your notes and ask for Anki cards. Deckhand will produce atomic cloze-deletion Anki cards, grounding them in a **contextual** anchor on the back, and hands you a ready-to-import `.tsv` file. That's it.
 
 ## Four phase Approach
 
 1. **Setup** — Asks you which deck the cards belong in to reuse your existing tag scheme. It may ask for an export of your current deck to help paint the full picture and reuse tag schemes, say no if you don't want it to do this and it will build a brand new deck. 
-2. **Pre-flight** — Reads how to make cards, then your notes end-to-end. It then fact-checks every volatile or checkable claim with a forced web search. If something is clearly *wrong* it flags it for you instead of touching your notes; Similarly, if something's *outdated* it will surface it for you to decide what to do, but doesn't assume that it's wrong. It also flags candidates for mnemonic devices and image-occlusion to enhance recall, while identifying foundational concepts based on specific criteria that it will review more rigorously.
-3. **Build** — Drafts the cards: one tested fact per card with the load-bearing word hidden, short sentences, explicit comparison cards for things that are easy to confuse.
-4. **Adversarial review** — A *fresh* Claude subagent that never saw the build reasoning attacks every card as a skeptical third-party and compares it against best practices, whether surrounding context gives away the answer too easily, and whether it's training content or just pattern-matching. Cards found to be 'foundational' get the hardest look, anything that fails gets looped back to phase 3.
+2. **Pre-flight** — Reads how to make cards, then your notes end-to-end. It then fact-checks every volatile or checkable claim with a forced web search for domain-specific, academic sources. If something is clearly *wrong* it flags it for you instead of touching your notes; Similarly, if something's *outdated* it will surface it for you to decide what to do, but doesn't assume that it's wrong. It will also flag candidates for mnemonic devices and image-occlusion to enhance recall, while identifying foundational concepts based on specific criteria that it will review more rigorously.
+3. **Build** — Drafts one tested fact per card with the load-bearing word hidden, short sentences, explicit comparison cards for things that are easy to confuse.
+4. **Adversarial review** — A *fresh* Claude subagent that never saw the build reasoning attacks every card as a skeptical third-party and compares it against best practices, checks whether surrounding context gives away the answer too easily, and whether it's training content or just pattern-matching. Cards found to be 'foundational' get the hardest look, anything that fails gets looped back to phase 3.
 
 ## Built on
 
@@ -20,21 +20,18 @@ Deckhand encodes established spaced-repetition practice and active recall techni
 - **Piotr Wozniak** — *[20 Rules of Formulating Knowledge](https://supermemo.guru/wiki/20_rules_of_knowledge_formulation)*
 - **Andy Matuschak** — *[How to Write Good Prompts](https://andymatuschak.org/prompts/)*
 - **Michael Nielsen** — *[Augmenting Long-Term Memory](https://augmentingcognition.com/ltm.html)*
-- **The Anki manual** — note types, cloze syntax, and text-import format
-- Scheduling is left to Anki's **FSRS** algorithm — Deckhand only authors cards.
 
 ## Best practices
 
 - **Learn it first.** You need to understand the material before making flash cards, this doesn't skip that part for you, sorry.
-- **Expand your notes before carding them.** This is actually really huge, when I was testing it, I had it create cards where I had expanded on them and even added my own personal context. This skill wove that context into the card which makes it that much more personalized and memorable. When identifying information for mnemonic devices this is particularly helpful and it may suggest things from its memory. Remember, garbage going in is garbage forever.
-- **Review the flags.** When Deckhand surfaces a suspect fact or a mnemonic or image occlusion candidate, weigh in. Learning is most effective when it's multi-modal.
+- **Expand your notes before carding.** Not only does this help you learn it, but expanding the notes gives better context to Claude but allows **you** the opportunity to add personal context. Claude will attempt to suggest information from memory, but if you hardcode personal context notes into it, you'll get way more mileage out of your cards. You'll also be able to clean them up a bit, garbage going in is garbage forever.
+- **Review the flags.** When Deckhand surfaces a suspect fact, mnemonic, or image occlusion candidate, weigh in. Learning is most effective when it's multi-modal.
 
 ## Installation
 
 Deckhand is a Claude Code / Cowork skill and lives in a folder under your skills
 directory, which lives at `~/.claude/skills/` (on Windows,
-`%USERPROFILE%\.claude\skills\`). The skill itself ends up at
-`~/.claude/skills/deckhand/`.
+`%USERPROFILE%\.claude\skills\`).
 
 If you don't have a skills folder yet, it's because you haven't added any. The
 `git clone` command below creates the path for you. If you're just downloading the
@@ -57,8 +54,7 @@ The result should be `…/.claude/skills/deckhand/SKILL.md`. Restart Claude Code
 
 > Don't have git? Download the repo as a ZIP from GitHub and extract it into
 > `~/.claude/skills/deckhand/`. Make sure the folder is named exactly `deckhand` and
-> that `SKILL.md` sits directly inside it — not in a nested `deckhand-main/` subfolder,
-> as some ZIPs unpack.
+> that `SKILL.md` sits directly inside it.
 
 ## How to Use
 
@@ -80,8 +76,8 @@ The result should be `…/.claude/skills/deckhand/SKILL.md`. Restart Claude Code
 
 ## Requirements
 
-- **Claude Code** or **Cowork** (the skill relies on subagents for the review pass and web search for fact-checking).
 - **Anki** desktop (2.1.54+ — the version that introduced the text-import header directives).
+- Optional: **Claude Code** or **Cowork** (the skill relies on subagents for the review pass and web search for fact-checking). It will work without it, you just wont have the verification or review passes.
 - Optional: the **Notion** connector, if you keep your notes there.
 
 ## License
