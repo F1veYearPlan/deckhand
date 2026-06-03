@@ -1,22 +1,22 @@
 ---
-name: anki-flash-cards
+name: deckhand
 description: >-
   Turn a user's notes or study material into high-quality Anki cloze-deletion flashcards built for long-term recall, applying spaced-repetition best practices (atomic facts, mandatory context anchor, interference-busting) and an adversarial review pass. Use whenever the user wants to make flashcards, a deck, cloze deletions, or spaced-repetition/active-recall study material from notes, lectures, documentation, or mentions Anki, cloze, "carding," spaced repetition, or memorizing a body of material. Trigger even on a bare "make cards from this." Full methodology loads with the skill.
 ---
 
 # Anki Flash Cards
 
-Turn the user's notes into atomic, recall-optimized Anki cards. 
+Turn the operator's notes into atomic, recall-optimized Anki cards. 
 
 ## Read this first: what this skill is and is not
 
-Anki utilizes spaced-repetition learning to prevent forgetting of understanding the user already has, it does not create understanding.
+Anki utilizes spaced-repetition learning to prevent forgetting of understanding the operator already has, it does not create understanding.
 
 - **Bias toward fewer, higher-value cards.** A bad card is worse than no card: It costs
 review time and builds false confidence. Create cards that cover the material while
 placing emphasis on foundational knowledge.
 - **Encode only what is understood.** Cards built on confusion encode confusion.
-If the operator does not yet understand the material, stop and say so (Phase 0).
+If the operator does not yet understand the material, stop and say so (Phase 1).
 
 If at any point the source material is genuinely confusing or scrambled, 
 surface the gap to the operator instead of papering over it with cards.
@@ -26,7 +26,7 @@ surface the gap to the operator instead of papering over it with cards.
 This skill relies on capabilities that exist in **Claude Code or Cowork**:
 - **Subagents** for the Phase 4 adversarial review (a fresh reviewer with no
   build context). If subagents are unavailable, do the review inline as a
-  best-effort sanity check and tell the user it is less independent.
+  best-effort sanity check and tell the operator it is less independent.
 - **Web search** for Phase 2 verification and Phase 3 grounding. If unavailable,
   flag every volatile claim as unverified rather than guessing.
 - **No other dependencies.** Delivery is a plain TSV (§9b) that imports natively —
@@ -42,25 +42,24 @@ This skill relies on capabilities that exist in **Claude Code or Cowork**:
 
 ## Workflow
 
-### Phase 0 — User Check
+### Phase 1 — Setup
 
-Before anything else, confirm two things with the user:
+Before anything else, confirm two things with the operator:
 - **The notes are complete.** It's best to card a finished body of material, not a
   work in progress — otherwise you build cards you'll have to revise or discard.
 - **They've actually learned it.** Spaced repetition reinforces existing
   understanding; it does not create it. You can verify the claims as written, but
-  you cannot verify the user's mental model — say so plainly.
+  you cannot verify the operator's mental model — say so plainly.
 
-If the notes are unfinished or the user hasn't learned the material yet, advise
+If the notes are unfinished or the operator hasn't learned the material yet, advise
 them to handle that first; building on a shaky foundation cheapens every card. Do
 not proceed until they confirm.
 
-### Phase 1 — Prompt
-
-The user invokes the skill. Ask the user if they have a current deck to place the cards in.
-If yes, you should ask the user to export their current deck in order to assist with deduplication and 
-successfully integrating the new notes with their current workflow and structure, ensuring we reuse their
-tagging system (if they have one). If all else fails or the user seems confused, a new deck is fine.
+Then ask whether they have a current deck the cards should join. If yes, ask them to
+export it — **not so we change anything in it (we never touch their existing cards),**
+but so we can read it to build a fuller picture of what they're learning, reuse their
+tagging system, and avoid drafting cards that overlap with ones they already have. If
+they'd rather not, or seem unsure, a new deck is fine.
 
 ### Phase 2 — Pre-flight (gather context, build the big picture, and flag information; touch nothing yet)
 
@@ -70,7 +69,7 @@ Do these in order; the order is a dependency, NOT a preference.
    You cannot judge what is volatile, what deserves a mnemonic, or how to deck/tag 
    until this is in context.
 2. **Read the source notes end-to-end** and build a picture of the whole. No
-   carding mid-paragraph. If the user supplied an export, look through those cards
+   carding mid-paragraph. If the operator supplied an export, look through those cards
    to paint a better picture of what they're hoping to learn or understand.
 3. **Verifier.** Read `references/volatility-and-search.md`. Identify volatile or
    checkable claims; You **MUST** verify them by a **FORCED** web search with reputable
@@ -79,8 +78,8 @@ Do these in order; the order is a dependency, NOT a preference.
    **wrong**, flag it and don't build a card on the disputed claim. If a claim is merely 
    **outdated/superseded but still relevant** (often the entire point in security, medicine, 
    law, and many other fields), do NOT "correct," demote, or replace it — surface it as an 
-   optional enrichment alongside the current state and let the user decide. **Never** edit their notes; 
-   the user **always** decides. (See the reference's "Outdated ≠ wrong" section.)
+   optional enrichment alongside the current state and let the operator decide. **Never** edit their notes; 
+   the operator **always** decides. (See the reference's "Outdated ≠ wrong" section.)
 4. **Enhancer.** Identify and *flag as candidates* (do not write yet):
    - **Image-occlusion candidates** — facts with inherent visual/spatial
      structure (anatomy, network topology, packet diagrams).
@@ -95,18 +94,25 @@ Do these in order; the order is a dependency, NOT a preference.
     Every mnemonic must **bridge both the cue and the target** in one image — e.g. for
     FTP/21, "21 Savage uploading files over FTP" pulls back both the number and the
     protocol; "21 Savage" alone only hooks one end.
-    **Personalize, don't impose:** mnemonics stick best when built from the user's own
+    **Personalize, don't impose:** mnemonics stick best when built from the operator's own
     associations. When surfacing a candidate, advise them of this and ask them to supply
     the personal hook or suggest one from their memory rather than handing over a generic one. 
     Offer to web-search for an established/canonical mnemonic as a starting point (many exist for OSI, cranial
     nerves, etc.), noting a personalized variant usually beats the canonical one.
-   - **Foundational concepts** — apply the importance test in the `card-principles.md`. 
-     This is an in-process signal, not a tag. It drives more thorough carding and harder Phase-4 review. 
-     Cap it: expect the top ~10–20% of concepts, not the majority.
-5. **Observe deck and tag structure.** If deduping, read the existing cards/tags
-   for the target scope. Read `references/tag-taxonomy.md`. Determine where cards
-   should go (default: an existing deck; propose a new one only under the
-   deck policy in the tag file, and confirm with the user before creating it).
+   - **Foundational concepts** — apply the importance test in `card-principles.md`,
+     using both signals: the **structural** one (how many other cards in this batch
+     depend on it — primary, grounded) and the **canonical** one (whether it's a
+     pillar of the domain regardless of how often these notes use it — secondary,
+     lower-confidence). This is an in-process signal, not a tag. It drives more
+     thorough carding and a harder Phase-4 review, but never auto-carding — surface
+     it for the operator to decide. Cap it: expect the top ~10–20% of concepts, not
+     the majority.
+5. **Observe deck and tag structure.** If the operator shared an export, read the
+   existing cards/tags for the target scope — to reuse their tagging system and to
+   avoid drafting cards that overlap with ones they already have (never to alter
+   their cards). Read `references/tag-taxonomy.md`. Determine where cards should go
+   (default: an existing deck; propose a new one only under the deck policy in the
+   tag file, and confirm with the operator before creating it).
 
 ### Phase 3 — Build
 
@@ -151,9 +157,9 @@ NOT importable; never hand it over as the import file.
   fact in the bigger picture — never a restatement of the answer, never the mnemonic.
 - Every card has a **Source** (in `Back Extra`). Volatile cards also carry a date
   and version inside the cloze `Text` itself, so staleness shows during review.
-- Never edit or silently "correct" the user's notes. Flag genuine errors; surface
+- Never edit or silently "correct" the operator's notes. Flag genuine errors; surface
   outdated-but-still-relevant facts as optional enrichments, never as corrections —
-  "outdated" ≠ "wrong" (legacy/superseded facts are often the point). The user
+  "outdated" ≠ "wrong" (legacy/superseded facts are often the point). The operator
   always decides. (See `volatility-and-search.md` → "Outdated ≠ wrong".)
 - Tags: lowercase, `::` for hierarchy, 2–4 per card max, reuse existing tag
   strings exactly (read them first), never invent a near-duplicate.

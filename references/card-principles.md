@@ -11,7 +11,7 @@ and the Anki manual, adapted to this workflow.
 2. The four properties every card must pass + Antipatterns
 3. Cloze rules
 4. Direction: test production, not only recognition
-5. The Context field (mandatory)
+5. The Context anchor (mandatory)
 6. Note type and fields
 7. Domain pitfalls
 8. The Enhancer gates: image, mnemonic, importance
@@ -34,7 +34,7 @@ spread over years (Nielsen's test); skip the rest.
 ## 2. The four properties every card must pass + Antipatterns
 
 - **Focused** — asks exactly one thing.
-- **Precise** — has one reasonable correct answer; a future-user can't give a
+- **Precise** — has one reasonable correct answer; a future reviewer can't give a
   "technically right but not wanted" answer.
 - **Consistent** — lights up the same recall each time; the question doesn't drift.
 - **Effortful** — requires retrieval, not pattern-matching the question's shape.
@@ -70,16 +70,16 @@ server replies with {{c2::SYN-ACK}}, client responds with {{c3::ACK}}.
 ## 4. Direction: test production, not only recognition
 
 Recognition ("does this term mean X?") is weaker than production ("what term means
-X?"). For terms the user must actively produce, **cloze the term itself** so the
+X?"). For terms the operator must actively produce, **cloze the term itself** so the
 card forces recall of the term, not the definition around it. Don't reflexively
 test every direction — that doubles review load — but ensure the *direction that
 matters* is the one the deletion sits on.
 
-## 5. The Context field (mandatory)
+## 5. The Context anchor (mandatory)
 
-Every card carries a Context field on the back, distinct from the answer. It is
+Every card carries a Context anchor on the back, distinct from the answer. It is
 the memory-anchoring scaffold: it re-situates the atomic fact in the bigger
-picture the user understands, and gives them something to re-read when the fact
+picture the operator understands, and gives them something to re-read when the fact
 has gone fuzzy but not yet forgotten (Wozniak's redundancy / reasoning-clue
 principle — extra retrieval paths if the primary one fails).
 
@@ -106,14 +106,14 @@ cards; anything you'd phrase as question→answer becomes a cloze instead (§4,
 - **`Back Extra`** — everything shown under the answer, packed into this one
   field because the built-in Cloze type has no dedicated Context/Source fields:
   - the mandatory **Context** anchor (§5),
-  - the **Source**, and **Date Added** (YYYY-MM-DD),
+  - the **Source**, and a **Date** (YYYY-MM-DD),
   - an approved **Mnemonic**, if any, on its own labeled line (never merged into
     the Context wording).
 
   Render these as HTML (e.g. `<b>Context:</b> … <br><span ...>Source · date</span>`)
   so they read cleanly on the card back (see §9).
 
-If the user already has their own cloze-capable note type with real
+If the operator already has their own cloze-capable note type with real
 Context/Source fields, map to those instead of folding into Back Extra — keep to
 their structure.
 
@@ -149,7 +149,7 @@ Gate: the fact has inherent **visual/spatial** structure — anatomy, network
 topology, packet/header layouts, diagrams (blank part of a picture; Wozniak's
 graphic deletion). Don't force images onto purely verbal facts. Image occlusion
 uses Anki's dedicated **Image Occlusion** note type, which is outside this skill's
-cloze-TSV delivery (§9) — so *flag* these candidates for the user to build
+cloze-TSV delivery (§9) — so *flag* these candidates for the operator to build
 separately rather than emitting them in the TSV.
 
 ### Mnemonic (apply rarely and deliberately)
@@ -162,7 +162,7 @@ preserve. The primary literature says you'll consciously need mnemonics for only
 Rules when a mnemonic is warranted:
 - Put it on its own labeled `Mnemonic:` line in Back Extra, **never** woven into
   the Context wording.
-- It is a **candidate for the user's approval**, not an automatic addition.
+- It is a **candidate for the operator's approval**, not an automatic addition.
 - It must **bridge both the cue and the target.** "21 Savage" anchors the number
   21 but not *FTP*; a one-sided hook fails. Encode both sides.
 - Keep them **rare.** The bizarreness effect works by distinctiveness; if every
@@ -171,24 +171,54 @@ Rules when a mnemonic is warranted:
   (leeches). Creation-time guessing is weaker — prefer flagging over forcing.
 
 ### Importance (foundational test) — in-process signal, not a tag
-A concept is **foundational** if other facts in the material *depend on it* — if
-misunderstanding it would make downstream cards unanswerable or cause cascading
-errors. Measure by prerequisite-load: how many other cards in this batch (or the
-existing deck) presuppose it? Ask for an export of the deck or for the operators
-input if one is suspected but evidence is not currently supporting it. 
+A concept is **foundational** if misunderstanding it would make downstream cards
+unanswerable or cause cascading errors. Two signals identify it; use both, and keep
+the first primary:
+
+1. **Structural (primary, higher-confidence).** How many other facts in *this batch*
+   (or the operator's existing deck) depend on it? This is grounded entirely in the
+   operator's own material. To make it concrete and auditable, sketch an explicit
+   dependency list — for each candidate concept, note which other cards presuppose
+   it — and rank by that in-degree. No tooling required: the batch is small enough
+   to reason over directly, and the hard part (judging what depends on what) is work
+   only you can do anyway.
+2. **Canonical (secondary, lower-confidence).** Is the concept a pillar of the domain
+   in its own right — load-bearing across the whole field regardless of how often
+   *these particular notes* lean on it (the TCP three-way handshake, the cardiac
+   cycle, public-key crypto)? The structural signal alone misses these when the notes
+   happen to be thin around a concept. This axis draws on world knowledge, so it is
+   the one most prone to hallucination and inflation — treat it as a flag to raise
+   for the operator, not a verdict.
+
+Combine them: flag foundational if structural in-degree is high **OR** the concept is
+canonically central. Keep structural primary; let canonical catch what the local
+graph underweights.
 
 This is a domain-independent test (it works for cardiology and networking alike,
 because it's about position in the knowledge graph, not content). Apply it in
 Phase 2; carry the flag in-process into Build and Review.
 
-- **Cap it.** Flag a concept foundational only if ~2–3+ other cards depend on it.
-  Expect the top ~10–20% of concepts, not the majority. If most things look
-  foundational, the signal is broken, re-apply more strictly.
+- **Cap it — hard.** Flag a concept foundational only if ~2–3+ other cards depend on
+  it, or it is unambiguously a domain pillar. Expect the top ~10–20% of concepts, not
+  the majority. If most things look foundational, the signal is broken — re-apply more
+  strictly. This cap applies *especially* to the canonical axis, where intro material
+  makes everything look like a pillar.
+- **Inform, don't override.** Foundational ≠ auto-card — but for the right reasons.
+  The human gate exists because the operator owns the scope of what's worth their
+  review time, and because the canonical signal is lower-confidence and needs
+  confirmation against inflation. It does **not** exist because "the operator already
+  knows it": knowing a concept today is the *prerequisite* for carding it (Phase 1),
+  not an argument against — the entire job of spaced repetition is to keep
+  understanding the operator already has from decaying. A foundational concept they
+  currently understand is the highest-value card there is. So importance raises a
+  concept for *consideration and a harder look*; when one seems foundational but the
+  batch doesn't clearly support it, ask the operator — or for a deck export — and let
+  them decide.
 - **What it drives:** foundational concepts get *more* cloze formulations
   (redundancy is justified for load-bearing basics) and a *harder* look in the
   Phase-4 adversarial review. They do not get a mnemonic on account of importance.
 - **Keep it in-process** by default. Only promote to a `priority::` tag if the
-  user explicitly wants to filter foundational cards for extra review in Anki — a
+  operator explicitly wants to filter foundational cards for extra review in Anki — a
   persistent importance tag otherwise attracts inflation into the tag tree.
 
 ## 9. Output format
@@ -196,7 +226,7 @@ Phase 2; carry the flag in-process into Build and Review.
 There are two representations. Don't conflate them:
 
 ### 9a. Review preview (human-readable; NOT importable)
-For the Phase-4 review and when presenting to the user, show each card in this
+For the Phase-4 review and when presenting to the operator, show each card in this
 readable block, one per `---`. This is for reading only — Anki cannot import it.
 
 ```

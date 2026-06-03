@@ -9,9 +9,9 @@ Point Claude at your notes and ask for Anki cards. Deckhand produces atomic, **c
 ## Four phase Approach
 
 1. **Setup** — Asks you which deck the cards belong in to reuse your existing tag scheme. It may ask for an export of your current deck to help paint the full picture and reuse tag schemes, say no if you don't want it to do this and it will build a brand new deck. 
-2. **Pre-flight** — Reads how to make cards, then your notes end-to-end. It will then fact-checks every volatile or checkable claim with a forced web search. If something is clearly *wrong* it flags it for you instead of touching your notes; Similarly, if something's *outdated* it will surface it for you to decide what to do, but doesn't assume that it's wrong. It also flags candidates for mnemonic devices and image-occlusion to enhance recall, while identifying foundational concepts based on specific criteria that it will review more rigorously.
+2. **Pre-flight** — Reads how to make cards, then your notes end-to-end. It then fact-checks every volatile or checkable claim with a forced web search. If something is clearly *wrong* it flags it for you instead of touching your notes; Similarly, if something's *outdated* it will surface it for you to decide what to do, but doesn't assume that it's wrong. It also flags candidates for mnemonic devices and image-occlusion to enhance recall, while identifying foundational concepts based on specific criteria that it will review more rigorously.
 3. **Build** — Drafts the cards: one tested fact per card with the load-bearing word hidden, short sentences, explicit comparison cards for things that are easy to confuse.
-4. **Adversarial review** — A *fresh* Claude subagent that never saw the build reasoning attacks every card as a skeptical third-party and compares it against best practices, whether surrounding context gives away the answer to easily, and whether it's training content or just pattern-matching. Cards found to be 'foundational' get the hardest look, anything that fails gets looped back to phase 3.
+4. **Adversarial review** — A *fresh* Claude subagent that never saw the build reasoning attacks every card as a skeptical third-party and compares it against best practices, whether surrounding context gives away the answer too easily, and whether it's training content or just pattern-matching. Cards found to be 'foundational' get the hardest look, anything that fails gets looped back to phase 3.
 
 ## Built on
 
@@ -70,7 +70,7 @@ The result should be `…/.claude/skills/deckhand/SKILL.md`. Restart Claude Code
 ## Requirements
 
 - **Claude Code** or **Cowork** (the skill relies on subagents for the review pass and web search for fact-checking).
-- **Anki** desktop (2.1.55+ recommended for the text-import header directives).
+- **Anki** desktop (2.1.54+ — the version that introduced the text-import header directives).
 - Optional: the **Notion** connector, if you keep your notes there.
 
 ## License
