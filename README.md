@@ -37,9 +37,6 @@ If you don't have a skills folder yet, it's because you haven't added any. The
 `git clone` command below creates the path for you. If you're just downloading the
 files, you'll have to make the `skills` folder yourself.
 
-**Clone straight into your skills folder** — paste the command as-is, there's
-nothing to fill in:
-
 ```bash
 # macOS / Linux
 git clone https://github.com/F1veYearPlan/deckhand.git ~/.claude/skills/deckhand
