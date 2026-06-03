@@ -49,7 +49,7 @@ The result should be `…/.claude/skills/deckhand/SKILL.md`. Restart Claude Code
 
 > Don't have git? Download the repo as a ZIP from GitHub and extract it into `~/.claude/skills/deckhand/` instead.
 
-## Usage — from GitHub to studying
+## Help, I'm super stuck
 
 1. **Install the skill** (above).
 2. **Give Claude your notes.** Any of:
