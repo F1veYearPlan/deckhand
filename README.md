@@ -31,24 +31,17 @@ Deckhand encodes established spaced-repetition practice and active recall techni
 
 ## Installation
 
-Deckhand is a Claude Code / Cowork skill — a folder under your skills directory,
-which lives at `~/.claude/skills/` (on Windows, `%USERPROFILE%\.claude\skills\`).
-The skill itself ends up at `~/.claude/skills/deckhand/`.
+Deckhand is a Claude Code / Cowork skill and lives in a folder under your skills
+directory, which lives at `~/.claude/skills/` (on Windows,
+`%USERPROFILE%\.claude\skills\`). The skill itself ends up at
+`~/.claude/skills/deckhand/`.
 
-> **No skills folder yet?** That's normal if you've never installed a skill. The
-> `git clone` commands below create the full path for you automatically, so you can
-> skip ahead. If you'd rather make it first (or you're using the ZIP route), run:
->
-> ```bash
-> # macOS / Linux
-> mkdir -p ~/.claude/skills
-> ```
-> ```powershell
-> # Windows (PowerShell)
-> New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills"
-> ```
+If you don't have a skills folder yet, it's because you haven't added any. The
+`git clone` command below creates the path for you. If you're just downloading the
+files, you'll have to make the `skills` folder yourself.
 
-**Clone straight into your skills folder:**
+**Clone straight into your skills folder** — paste the command as-is, there's
+nothing to fill in:
 
 ```bash
 # macOS / Linux
@@ -63,10 +56,9 @@ git clone https://github.com/F1veYearPlan/deckhand.git "$env:USERPROFILE\.claude
 The result should be `…/.claude/skills/deckhand/SKILL.md`. Restart Claude Code (or reload Cowork) so it picks up the new skill. Confirm it's loaded by asking Claude to "make some Anki cards" and it should invoke Deckhand.
 
 > Don't have git? Download the repo as a ZIP from GitHub and extract it into
-> `~/.claude/skills/deckhand/` instead — create the `~/.claude/skills/` folder first
-> (see the note above) if it doesn't already exist, since extracting won't make it
-> for you. Make sure the folder is named exactly `deckhand` and that `SKILL.md` sits
-> directly inside it (not in a nested `deckhand-main/` subfolder, as some ZIPs unpack).
+> `~/.claude/skills/deckhand/`. Make sure the folder is named exactly `deckhand` and
+> that `SKILL.md` sits directly inside it — not in a nested `deckhand-main/` subfolder,
+> as some ZIPs unpack.
 
 ## How to Use
 
