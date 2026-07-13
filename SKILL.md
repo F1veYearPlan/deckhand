@@ -150,6 +150,46 @@ tab-separated file with header directives that imports straight into Anki's buil
 Cloze note type (Context/Source/Date in Back Extra). The block/preview format is
 NOT importable; never hand it over as the import file.
 
+### Phase 5 — Final response format (mandatory)
+
+The final message to the operator MUST follow this exact structure. Fill the
+`<placeholders>`; do not reorder, rename, or drop sections.
+
+```
+# Review Summary
+Created <number of> cloze cards covering <what was covered>, all verified against
+<source material / sources searched>, adversarially reviewed by an independent agent
+for <what the review checked, e.g. atomicity, context leakage, pattern-matching>.
+
+The independent review found <X>, so I did <Y>.
+
+Each card carries a context and source field in Back Extra, and tags like
+<2–3 real examples of tags used>.
+
+To Import: Anki -> File -> Import -> Select the file from <path to file>
+
+## Findings
+
+* Errors: I found <X> errors in your notes. Your notes were left as they are.
+   * <Error, the correct information, and its source>
+   * <...one bullet per error>
+* Mnemonic Candidates:
+   * <Candidate, why it's a good candidate, and any suggestion or community example>
+   * <...one bullet per candidate>
+* <Anything else worth noting, as additional top-level bullets>
+```
+
+Rules:
+- **Errors** is always the first Findings bullet and **Mnemonic Candidates** always
+  the second — even when empty. With zero errors, still write "I found 0 errors in
+  your notes. Your notes were left as they are." with no sub-bullets. With zero
+  mnemonic candidates, state that under the Mnemonic Candidates bullet.
+- "The independent review found X, so I did Y" reports the Phase-4 outcome
+  concretely (e.g. "found 2 cards whose surrounding text gave away the answer, so I
+  rewrote them"). If the review passed everything, say so.
+- The import path in "To Import" names the actual saved file location the operator
+  can reach — never an internal/sandbox path.
+
 ## Critical rules
 
 - One card tests exactly one fact. One cloze deletion per card.
