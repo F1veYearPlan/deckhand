@@ -1,15 +1,19 @@
 # Card Principles
 
-The rubric for designing every card. Read this during Phase 3 (Build) and
-Phase 4 (Review). It encodes Wozniak's *20 Rules of Formulating Knowledge*,
-Matuschak's *How to Write Good Prompts*, Nielsen's *Augmenting Long-Term Memory*,
+The rubric for designing every card. Read during Phase 3 (Build) and
+Phase 4 (Review). 
+
+### Source Material
+* *Wozniak's *20 Rules of Formulating Knowledge*,
+* Matuschak's *How to Write Good Prompts*, 
+* Nielsen's *Augmenting Long-Term Memory*,
 and the Anki manual, adapted to this workflow.
 
 ## Contents
 
-1. Minimum Information Principle
-2. The four properties every card must pass + Antipatterns
-3. Cloze rules
+1. Cloze rules
+2. Minimum Information Principle
+3. The five properties every card must pass + Antipatterns
 4. Direction: test production, not only recognition
 5. The Context anchor (mandatory)
 6. Note type and fields
@@ -19,53 +23,72 @@ and the Anki manual, adapted to this workflow.
 
 ---
 
-## 1. Minimum Information Principle
+## 1. Cloze rules
+
+All material should be Cloze deletion. 
+
+Cloze cards hide key information in context, helping you recall details naturally. For example:
+"The [...] pumps blood throughout the body" tests your knowledge of "heart."
+
+### Best Practices
+1. Hide **key concepts** or **relationships**
+2. Write clear, focused prompts with enough context
+3. **Rephrase in fresh words.** Never cloze a sentence copied verbatim from the
+   notes — copied sentences get memorized by their shape, not their meaning (the
+   cloze format's single biggest risk). Rebuild the fact as a short sentence of
+   your own, then delete.
+4. A note may carry 2–3 deletions max (`c1`, `c2`, … — each number becomes its
+   own card testing one blank); tend toward one. Never put two facts under the
+   same `cN` number.
+5. Keep the sentence short (~15–25 words). A three-line cloze is a paragraph,
+   not a fact — strongly consider splitting it.
+6. Use overlapping cards to connect related ideas. 
+7. Use Anki's hint syntax `{{c1::answer::hint}}` to disambiguate — the hint
+   shows inside the blank before answering (e.g. `{{c1::445::port}}`, or
+   `{{c1::mmWave::5G flavor}}` when several cards share a similar stem).
+   Prefer a hint over contorting the sentence or a bracketed `[Domain]` label.
+   Keep hints lean — a hint that narrows the field to one option is the answer.
+
+### Mistakes to Avoid
+1. Over-deletion: Don't hide too much at once. 
+2. Stripping context: Keep enough clues to understand what the question is asking without giving the answer away. 
+3. Testing recognition, not recall: Avoid passive phrasing.
+4. Overloading cards: Focus on one idea per card.
+
+## 2. Minimum Information Principle
 
 One card tests one atomic fact. The brain reinforces simple, consistent stimuli
 reliably; a card that asks five things splits effort five ways and reinforces
-none. Split compound cards into several atomic ones. Expect to write more cards
-than feels natural — but counterbalance against overload (the documented failure
-mode): atomic does not mean exhaustive. Card what is worth ~10 minutes of review
-spread over years (Nielsen's test); skip the rest.
+none of them. Split compound cards into several atomic ones.
 
-**Compound (bad):** "What is ARP, what layer of the OSI model does it operate on, and what is its main vulnerability?"
-**Atomic (good):** three cards — What is ARP, the layer, the vulnerability.
+Atomic does not mean exhaustive. Nielsen's threshold: card a fact if knowing it
+is worth ~10 minutes of your future time — the measured *cost* of a card is only
+4–7 minutes of review spread over 20 years. Skip the rest.
 
-## 2. The four properties every card must pass + Antipatterns
+**Compound (bad):** one deletion carrying three facts —
+`ARP is {{c1::the layer-2 protocol that maps IP addresses to MAC addresses and is vulnerable to cache poisoning}}.`
+**Atomic (good):** three cards —
+- `{{c1::ARP}} maps IP addresses to MAC addresses.`
+- `ARP operates at OSI layer {{c1::2}}.`
+- `ARP's main vulnerability is {{c1::cache poisoning}}.`
+
+## 3. The five properties every card must pass + Antipatterns
 
 - **Focused** — asks exactly one thing.
 - **Precise** — has one reasonable correct answer; a future reviewer can't give a
   "technically right but not wanted" answer.
 - **Consistent** — lights up the same recall each time; the question doesn't drift.
+- **Tractable** — can almost always be answered correctly; if a card keeps
+  failing, break it down or add a cue rather than tolerate the lapses. In Anki
+  this surfaces later as a **leech** (8 lapses → auto-tagged and suspended):
+  treat a leech as proof the card is bad — rewrite or split it, don't grind it.
 - **Effortful** — requires retrieval, not pattern-matching the question's shape.
 
 Two anti-patterns to reject:
 - **Binary prompts** ("Is XSS client-side? Y/N") — too shallow. Rephrase to force
-  production: "XSS executes its payload in whose browser?"
+  production: `XSS executes its payload in {{c1::the victim's}} browser.`
 - **Pattern-shape memorization** — long, distinctive question stems get memorized
   by *shape* without engaging content. Keep stems short and generic.
-
-## 3. Cloze rules
-
-Default to cloze for most material. It is fast, enforces atomicity, and keeps
-semantic context intact.
-
-1. **One deletion tested per card.** On a multi-blank sentence, generate separate
-   cards (`c1`, `c2`, `c3`) so the other blanks remain as scaffolding. Never blank
-   everything at once.
-2. **Hide the load-bearing word**, not a filler.
-3. **Keep the sentence short** (~15–25 words). A three-line cloze is a paragraph,
-   not a fact — strongly consider splitting it.
-4. **Overlapping clozes for sequences.** For ordered processes (handshakes, kill
-   chain, metabolic pathways), make each step its own cloze on one sentence so the
-   sequence's shape becomes part of the memory, without ever recalling all steps
-   at once.
-
-Example (produces three cards, each blanking one step):
-```
-The TCP three-way handshake proceeds: client sends {{c1::SYN}},
-server replies with {{c2::SYN-ACK}}, client responds with {{c3::ACK}}.
-```
 
 ## 4. Direction: test production, not only recognition
 
@@ -135,7 +158,7 @@ These recur across technical and medical material. Watch for them:
 5. **Command/procedure soup.** Card intent → flag/step, not the whole command in
    one card — as a cloze: `The nmap flag for OS detection is {{c1::-O}}.`
 6. **Ordered enumerations.** OSI layers, kill chain, ATT&CK tactics, pathways —
-   use overlapping clozes (§3.5), never one mega-card listing all items.
+   use overlapping clozes (§1.5), never one mega-card listing all items.
 7. **"It depends" answers.** If the answer depends on context, put the context in
    the question. An unanswerable card erodes confidence.
 
@@ -150,7 +173,10 @@ topology, packet/header layouts, diagrams (blank part of a picture; Wozniak's
 graphic deletion). Don't force images onto purely verbal facts. Image occlusion
 uses Anki's dedicated **Image Occlusion** note type, which is outside this skill's
 cloze-TSV delivery (§9) — so *flag* these candidates for the operator to build
-separately rather than emitting them in the TSV.
+separately rather than emitting them in the TSV. More broadly: text import never
+transports media at all (image files must be pre-placed in `collection.media`),
+so image-rich card backs — however valuable — are outside this pipeline; flag,
+don't fake them.
 
 ### Mnemonic (apply rarely and deliberately)
 Gate: the fact is **arbitrary** — no logical hook to understanding (port numbers,
@@ -234,7 +260,7 @@ TEXT: Telnet listens on TCP port {{c1::23}}.
 CONTEXT: Older cleartext remote-management protocol; on Meow box this was the only open port. Don't confuse with SSH (22).
 SOURCE: Notion → CPTC → Meow Box
 DATE: 2026-06-02
-TAGS: topic::offsec::protocols::telnet source::notion::cptc type::number
+TAGS: topic::offsec::protocols::telnet type::gotcha
 ---
 ```
 
@@ -262,14 +288,28 @@ Then each card is ONE physical line of three tab-separated columns:
 Worked example (the 9a preview card → its TSV row; → marks a tab):
 
 ```
-Telnet listens on TCP port {{c1::23}}. → <b>Context:</b> Older cleartext remote-management protocol; on Meow box this was the only open port. Don't confuse with SSH (22). <br><span style="font-size:12px;color:#888">Notion → CPTC → Meow Box · 2026-06-02</span> → topic::offsec::protocols::telnet source::notion::cptc type::number
+Telnet listens on TCP port {{c1::23}}. → <b>Context:</b> Older cleartext remote-management protocol; on Meow box this was the only open port. Don't confuse with SSH (22). <br><span style="font-size:12px;color:#888">Notion → CPTC → Meow Box · 2026-06-02</span> → topic::offsec::protocols::telnet type::gotcha
 ```
 
 Rules:
 - Keep each card on **one physical line** (no raw newlines inside a field; use
   `<br>`). `#html:true` makes the markup render.
-- Re-importing the same file **updates** matching notes (Anki matches on the first
-  field, `Text`) instead of duplicating — so fix-and-reimport is safe.
+- `#html:true` also means every field is parsed as markup: entity-escape literal
+  `<`, `>`, `&` as `&lt;`, `&gt;`, `&amp;`.
+- Never leave a literal `::` inside a cloze answer — Anki reads it as the hint
+  separator (`{{c1::std::vector}}` imports as answer "std", hint "vector").
+  Reword, or make the hint deliberate.
+- Re-import updates are **keyed to the `Text` field**: Anki matches notes on the
+  HTML-stripped first field, within the same note type ("Update" is the usual
+  resolution, but Anki remembers whatever was last chosen in the import dialog).
+  Re-importing therefore safely fixes **Back Extra and tags only** — an edit to
+  `Text` breaks the match and imports a **new note** alongside the old one. For
+  `Text` fixes, tell the operator to delete the old note in the browser first.
 - Volatile cards: keep the date/version inside the `Text` itself, not only in
   Back Extra, so staleness is visible during review.
-- Confirm the `#deck:` name is what you intend (create the deck first if needed).
+- Confirm the `#deck:` name is what you intend — Anki auto-creates it on import
+  if it doesn't exist.
+- Localization caveat: `#notetype:Cloze` and the `Text`/`Back Extra` names match
+  only on **English-created collections** (stock note-type and field names are
+  localized at collection creation). On a non-English Anki the headers silently
+  don't resolve; the operator selects the note type manually in the import dialog.

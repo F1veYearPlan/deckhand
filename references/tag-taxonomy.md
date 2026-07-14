@@ -17,11 +17,18 @@ taxonomy each run.
 ## The axes
 
 ```
-topic::<area>::<sub-area>     # what the card is about (varies by domain)
-source::<origin>             # where the knowledge came from (exactly one)
-type::<knowledge-kind>       # what kind of knowledge it is (one or more)
-context::<scoping>           # situational scope, e.g. exam/cert/rotation (optional)
+topic::<area>::<sub-area>    # what the card is about — the one tag every card carries
+type::<knowledge-kind>       # only when it changes review behavior (volatile, gotcha, comparison)
+source::<origin>             # only when the collection draws on multiple sources
+context::<scoping>           # only when the operator juggles multiple exams/certs/rotations
 ```
+
+**Default is 1–2 tags: `topic::` plus at most one other that earns its place.**
+A tag that would sit on every card in the batch groups nothing. If `source::`
+or `context::` would be identical across the whole batch and no existing cards
+use that axis, leave it off — Back Extra's Source line and the deck name
+already carry that information. Introduce those axes only when a second
+source or cert actually enters the collection.
 
 Optional `status::` exists, but prefer Anki's built-in **flags** for transient
 states (needs-review, leech) to keep the tag tree clean.
@@ -30,27 +37,33 @@ states (needs-review, leech) to keep the tag tree clean.
 
 ```
 # Medicine
-topic::cardiology::arrhythmias        source::first-aid::ch12     type::concept     context::exam::step1
-topic::pharmacology::beta-blockers    source::sketchy::pharm      type::comparison  context::rotation::im
+topic::cardiology::arrhythmias        source::first-aid::ch12     type::comparison  context::exam::step1
+topic::pharmacology::beta-blockers    source::sketchy::pharm      type::volatile    context::rotation::im
 
 # Networking
-topic::networking::tcp-ip             source::notion::tcp-notes   type::procedure
-topic::networking::dns                source::rfc-1035            type::number
+topic::networking::tcp-ip             source::notion::tcp-notes   type::gotcha
+topic::networking::dns                source::rfc-1035            type::comparison
 
 # Security
 topic::offsec::web::xss               source::notion::web-notes   type::gotcha      context::cert::oscp
 ```
 
-`type::` vocabulary (reuse, don't expand casually): `definition`, `concept`,
-`procedure`, `command`, `number`, `comparison`, `gotcha`, `volatile`.
+These rows show every axis populated to illustrate the vocabulary — a real card
+carries 1–2 of them (see "The axes"), not all four.
+
+`type::` vocabulary (reuse, don't expand casually): `volatile`, `gotcha`,
+`comparison` — the kinds that change review behavior (re-check on a cadence,
+extra care against interference, explicit disambiguation). Kind-of-knowledge
+labels (`definition`, `concept`, `procedure`, `command`, `number`) don't change
+how a card is reviewed — they'd sit on most cards and group nothing; leave them
+off.
 
 ## Hygiene rules
 
 1. **Lowercase, kebab-case.** `topic::offsec::active-directory`, never mixed case.
 2. **`::` for hierarchy.** Never spaces or slashes. Anki auto-creates parent levels.
-3. **2–4 tags per card, maximum.** Eight tags is noise, not organization. Be
-   aggressive about *covering the axes*, disciplined about *count*. Trim
-   `context::` when it isn't load-bearing.
+3. **1–2 tags per card by default, 4 absolute max.** A tag must group this card
+   with some-but-not-all others; covering axes for coverage's sake is noise.
 4. **Never a tag where a field/flag is better.** Difficulty → flag. Review date →
    Anki's scheduling / date metadata. Importance → in-process signal (see
    card-principles §8).
@@ -66,9 +79,12 @@ Default to one main deck per domain (a given learner is usually one domain), wit
 at most one or two sub-decks. Topical splitting belongs in tags, not decks —
 fragmenting into a deck-per-topic hides cards and adds no pedagogical value.
 
-A small deck count also produces **interleaving** (mixing topics within a review
-session), which has empirical support for retention — so the conservative deck
-strategy is a learning benefit, not just tidiness.
+A small deck count is also how the largest Anki communities operate in practice —
+the med-school standard is one deck of tens of thousands of cards, organized
+entirely by tags. The real wins are one scheduling pool, no same-topic runs cueing
+the next answer, and tag-filtered decks for targeted drilling. (Don't lean on
+"interleaving" as the justification: the research supports it only for
+discriminating confusably similar material, not for mixing unrelated topics.)
 
 **Default to the existing deck.** Propose a *new* deck only when one of these
 holds, and confirm with the operator before creating it:
