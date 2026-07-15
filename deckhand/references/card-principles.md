@@ -99,6 +99,13 @@ Antipatterns to reject:
 - **Pattern-shape memorization** — long, distinctive question stems get memorized
   by *shape* without engaging content. Keep stems short and generic.
 
+**Unique answerability.** Before finalizing a card, ask: given only this stem, is
+there a second defensible answer? If yes, add a hint (`{{c1::…::hint}}`) or a
+disambiguating clause. A card that admits multiple valid answers looks fine at
+build time and quietly fails months later — it is the most common construction
+flaw and the hardest to detect after the fact, which is why it is checked here,
+at write time.
+
 
 ## 4. Contextual Anchors
 

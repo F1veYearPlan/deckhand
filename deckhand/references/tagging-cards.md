@@ -62,8 +62,8 @@ off.
 3. **1–2 tags per card by default, 4 absolute max.** A tag must group this card
    with some-but-not-all others; covering axes for coverage's sake is noise.
 4. **Never a tag where a field/flag is better.** Difficulty → flag. Review date →
-   Anki's scheduling / date metadata. Importance → in-process signal (see
-   card-principles §8).
+   Anki's scheduling / date metadata. Importance → in-process signal (the
+   Enhancer's foundational-concepts flag), never a tag.
 5. **A tag must group.** If only one card would carry it, it's a note, not a tag.
 6. **Tag at creation,** never as a later pass — retro-tagging thousands of cards
    is far harder.
