@@ -1,9 +1,6 @@
-# Tag Taxonomy and Deck Policy
+# Tagging cards
 
-Read this during Phase 3 (tagging) and Phase 2 (when observing existing
-structure). Tags do topical organization; decks do scheduling. This taxonomy
-generalizes across domains (medicine, networking, security, etc.) by holding the
-**axes** fixed and varying the **sub-trees** per field.
+Tags do topical organization; decks do scheduling. This taxonomy generalizes across domains (medicine, networking, security, etc.) by holding the **axes** fixed and varying the **sub-trees** per field.
 
 ## The single most important rule for an automated tagger
 
